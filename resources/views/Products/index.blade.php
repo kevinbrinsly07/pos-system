@@ -58,9 +58,10 @@
 
       {{-- Toolbar --}}
       <div class="flex flex-col md:flex-row md:items-center gap-3 mb-4">
-          <form method="GET" action="{{ url()->current() }}" class="flex-1">
+          <form id="searchForm" method="GET" action="{{ url()->current() }}" class="flex-1">
               <div class="relative">
                   <input
+                      id="searchInput"
                       type="text"
                       name="q"
                       value="{{ request('q') }}"
@@ -96,9 +97,9 @@
           </div>
       @else
           {{-- Cards (mobile-first) --}}
-          <div id="cardView" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:hidden">
+          <div id="cardView" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               @foreach ($products as $product)
-                  <div class="bg-white border rounded-xl p-4 shadow-sm">
+                  <div class="bg-white border rounded-xl p-4 shadow-sm" data-name="{{ strtolower($product->name) }}">
                       <div class="flex items-start justify-between">
                           <h4 class="font-semibold text-lg">{{ $product->name }}</h4>
                           @php $low = ($product->stock ?? 0) <= 5; @endphp
@@ -115,7 +116,7 @@
           </div>
 
           {{-- Table (desktop) --}}
-          <div id="tableView" class="hidden md:block">
+          <div id="tableView" class="hidden">
               <div class="overflow-hidden rounded-xl border bg-white">
                   <div class="overflow-x-auto">
                       <table class="min-w-full text-left">
@@ -130,7 +131,7 @@
                           <tbody class="divide-y divide-gray-100">
                               @foreach ($products as $product)
                                   @php $low = ($product->stock ?? 0) <= 5; @endphp
-                                  <tr class="hover:bg-gray-50">
+                                  <tr class="hover:bg-gray-50" data-name="{{ strtolower($product->name) }}">
                                       <td class="p-3 font-medium text-gray-800">{{ $product->name }}</td>
                                       <td class="p-3">${{ number_format($product->price, 2) }}</td>
                                       <td class="p-3">{{ $product->stock }}</td>
@@ -157,24 +158,64 @@
   </div>
 
   <script>
-      (function () {
-          const btn = document.getElementById('toggleViewBtn');
-          const table = document.getElementById('tableView');
-          const cards = document.getElementById('cardView');
-          if (!btn || !table || !cards) return;
+    (function () {
+      const btn = document.getElementById('toggleViewBtn');
+      const table = document.getElementById('tableView');
+      const cards = document.getElementById('cardView');
+      const searchInput = document.getElementById('searchInput');
+      const searchForm = document.getElementById('searchForm');
 
-          btn.addEventListener('click', function () {
-              const tableHidden = table.classList.contains('hidden');
-              if (tableHidden) {
-                  table.classList.remove('hidden');
-                  cards.classList.add('md:hidden');
-                  cards.classList.add('hidden');
-              } else {
-                  table.classList.add('hidden');
-                  cards.classList.remove('hidden');
-                  cards.classList.remove('md:hidden');
-              }
-          });
-      })();
+      if (!btn || !table || !cards) return;
+
+      // Don't submit the page for search; we filter client-side
+      if (searchForm) searchForm.addEventListener('submit', e => e.preventDefault());
+
+      function setView(view) {
+        if (view === 'table') {
+          table.classList.remove('hidden');
+          cards.classList.add('hidden');
+          btn.dataset.view = 'table';
+          btn.textContent = 'Show Cards';
+        } else {
+          cards.classList.remove('hidden');
+          table.classList.add('hidden');
+          btn.dataset.view = 'cards';
+          btn.textContent = 'Show Table';
+        }
+      }
+
+      function currentView() { return btn.dataset.view || 'cards'; }
+
+      // Initialize based on screen size
+      setView(window.innerWidth >= 768 ? 'table' : 'cards');
+      window.addEventListener('resize', () => {
+        // Optional: adapt when resizing across breakpoint
+        const desired = window.innerWidth >= 768 ? 'table' : 'cards';
+        if (currentView() !== desired) setView(desired);
+      });
+
+      btn.addEventListener('click', () => setView(currentView() === 'table' ? 'cards' : 'table'));
+
+      function filterItems(term) {
+        const q = (term || '').toLowerCase().trim();
+        const cardItems = cards.querySelectorAll('[data-name]');
+        const tableRows = table.querySelectorAll('tbody [data-name]');
+
+        cardItems.forEach(el => {
+          const name = (el.getAttribute('data-name') || '').toLowerCase();
+          el.style.display = name.includes(q) ? '' : 'none';
+        });
+
+        tableRows.forEach(tr => {
+          const name = (tr.getAttribute('data-name') || '').toLowerCase();
+          tr.style.display = name.includes(q) ? '' : 'none';
+        });
+      }
+
+      if (searchInput) {
+        searchInput.addEventListener('input', () => filterItems(searchInput.value));
+        if (searchInput.value) filterItems(searchInput.value);
+      }
+    })();
   </script>
 @endsection
