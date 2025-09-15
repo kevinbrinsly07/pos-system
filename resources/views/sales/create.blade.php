@@ -34,7 +34,7 @@
             @csrf
             <div>
                 <label for="product_id" class="block text-sm font-medium text-gray-700">Product</label>
-                <select name="product_id" id="product_id" class="mt-1 w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500" @if(empty($products)) disabled @endif required>
+                <select name="product_id" id="product_id" class="mt-1 px-4 py-2 w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500" @if(empty($products)) disabled @endif required>
                     <option value="" selected disabled>{{ empty($products) ? 'No products available' : 'Select a product' }}</option>
                     @forelse ($products as $product)
                         <option value="{{ $product->id }}" {{ old('product_id') == $product->id ? 'selected' : '' }}>
@@ -51,7 +51,7 @@
             </div>
             <div>
                 <label for="quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
-                <input type="number" name="quantity" id="quantity" class="mt-1 w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500" min="1" required>
+                <input type="number" name="quantity" id="quantity" class="mt-1 px-4 py-2 w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500" min="1" required>
             </div>
             <div class="flex justify-end">
                 <a href="{{ route('sales.index') }}" class="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 mr-2">Cancel</a>

@@ -12,7 +12,7 @@
 </head>
 <body class="bg-gray-100">
     <nav class="bg-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-4">
+        <div class="max-w-[1200px] mx-auto px-4">
             <div class="flex justify-between h-16">
                 <div class="flex">
                     <a href="{{ url('/') }}" class="flex items-center text-xl font-bold">
@@ -40,7 +40,7 @@
 
     <main class="py-4">
         @if(session('success'))
-            <div class="max-w-7xl mx-auto px-4 mb-4">
+            <div class="max-w-[1200px] mx-auto px-4 mb-4">
                 <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
                     {{ session('success') }}
                 </div>
@@ -48,7 +48,7 @@
         @endif
 
         @if($errors->any())
-            <div class="max-w-7xl mx-auto px-4 mb-4">
+            <div class="max-w-[1200px] mx-auto px-4 mb-4">
                 <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
                     <ul>
                         @foreach($errors->all() as $error)
