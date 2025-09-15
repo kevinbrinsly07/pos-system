@@ -1,31 +1,63 @@
 @extends('welcome')
 
 @section('content')
-    <h2 class="text-2xl font-bold mb-4">Sales History</h2>
-    @if (session('success'))
-        <div class="bg-green-100 text-green-700 p-4 rounded mb-4">{{ session('success') }}</div>
-    @endif
-    @if (session('error'))
-        <div class="bg-red-100 text-red-700 p-4 rounded mb-4">{{ session('error') }}</div>
-    @endif
-    <table class="w-full bg-white shadow rounded">
-        <thead>
-            <tr class="bg-gray-200">
-                <th class="p-2">Product</th>
-                <th class="p-2">Quantity</th>
-                <th class="p-2">Total Price</th>
-                <th class="p-2">Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($sales as $sale)
-                <tr>
-                    <td class="p-2">{{ $sale->product->name }}</td>
-                    <td class="p-2">{{ $sale->quantity }}</td>
-                    <td class="p-2">${{ number_format($sale->total_price, 2) }}</td>
-                    <td class="p-2">{{ $sale->created_at->format('Y-m-d H:i:s') }}</td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {{-- Top Bar --}}
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div>
+                <h2 class="text-2xl font-bold">Sales History</h2>
+                <p class="text-sm text-gray-500">Track past sales and transactions.</p>
+            </div>
+            @auth
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50">
+                    Logout
+                </button>
+            </form>
+            @endauth
+        </div>
+
+        {{-- Flash messages --}}
+        @if (session('success'))
+            <div class="mb-4 rounded-lg border border-green-200 bg-green-50 text-green-700 px-4 py-3">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if (session('error'))
+            <div class="mb-4 rounded-lg border border-red-200 bg-red-50 text-red-700 px-4 py-3">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        {{-- Table --}}
+        <div class="overflow-hidden rounded-xl border bg-white">
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-left">
+                    <thead class="bg-gray-50 sticky top-0">
+                        <tr>
+                            <th class="p-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Product</th>
+                            <th class="p-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Quantity</th>
+                            <th class="p-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Price</th>
+                            <th class="p-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        @forelse ($sales as $sale)
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-3 font-medium text-gray-800">{{ $sale->product->name }}</td>
+                                <td class="p-3">{{ $sale->quantity }}</td>
+                                <td class="p-3">${{ number_format($sale->total_price, 2) }}</td>
+                                <td class="p-3">{{ $sale->created_at->format('Y-m-d H:i:s') }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="p-6 text-center text-gray-500">No sales found.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 @endsection
