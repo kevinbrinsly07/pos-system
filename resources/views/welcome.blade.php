@@ -15,7 +15,7 @@
             <div class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-16">
                     <div class="flex items-center gap-3">
-                        <div class="h-9 w-9 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold">
+                        <div class="h-12 w-12 rounded-lg bg-gray-900 text-white hover:bg-black flex items-center justify-center  font-bold">
                             POS
                         </div>
                         <div>
@@ -26,7 +26,7 @@
                     <nav class="hidden md:flex items-center gap-2">
                         <a href="{{ route('products.index') }}" class="px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700">Manage Products</a>
                         <a href="{{ route('sales.index') }}" class="px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700">View Sales</a>
-                        <a href="{{ route('sales.create') }}" class="px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">Record Sale</a>
+                        <a href="{{ route('sales.create') }}" class="px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700">Record Sale</a>
                     </nav>
                     <div class="hidden md:flex items-center gap-3">
                         @auth
@@ -52,7 +52,7 @@
                     <nav class="flex flex-col gap-2">
                         <a href="{{ route('products.index') }}" class="px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700">Manage Products</a>
                         <a href="{{ route('sales.index') }}" class="px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700">View Sales</a>
-                        <a href="{{ route('sales.create') }}" class="px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">Record Sale</a>
+                        <a href="{{ route('sales.create') }}" class="px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700">Record Sale</a>
                     </nav>
                     <div class="mt-3 flex items-center gap-3">
                         @auth

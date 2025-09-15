@@ -24,3 +24,9 @@ Route::middleware('auth')->group(function () {
 
 Route::resource('products', ProductController::class)->only(['index', 'create', 'store']);
 Route::resource('sales', SaleController::class)->only(['index', 'create', 'store']);
+
+Route::get('/sales/{sale}/invoice.pdf', [SaleController::class, 'invoicePdf'])
+    ->name('sales.invoice.pdf');          // view/print in browser
+
+Route::get('/sales/{sale}/invoice/download', [SaleController::class, 'invoiceDownload'])
+    ->name('sales.invoice.download');     // force download

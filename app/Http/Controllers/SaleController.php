@@ -1,9 +1,11 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Sale;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SaleController extends Controller
 {
@@ -42,5 +44,50 @@ class SaleController extends Controller
         $product->save();
 
         return redirect()->route('sales.index')->with('success', 'Sale recorded successfully.');
+    }
+
+    public function invoicePdf(Sale $sale)
+    {
+        $sale->load('product');
+
+        $data = [
+            'sale'        => $sale,
+            'product'     => $sale->product,
+            'unit_price'  => (float)$sale->product->price,
+            'quantity'    => (int)$sale->quantity,
+            'total_price' => (float)$sale->total_price,
+            // add your business info here or pass from config
+            'biz' => [
+                'name'    => config('app.name', 'My Shop'),
+                'address' => '123 Main Street, Colombo',
+                'phone'   => '011-1234567',
+                'email'   => 'hello@myshop.lk',
+            ],
+        ];
+
+        $pdf = Pdf::loadView('sales.invoice', $data)->setPaper('A4');
+        return $pdf->stream("invoice-{$sale->id}.pdf");
+    }
+
+    public function invoiceDownload(Sale $sale)
+    {
+        $sale->load('product');
+
+        $data = [
+            'sale'        => $sale,
+            'product'     => $sale->product,
+            'unit_price'  => (float)$sale->product->price,
+            'quantity'    => (int)$sale->quantity,
+            'total_price' => (float)$sale->total_price,
+            'biz' => [
+                'name'    => config('app.name', 'My Shop'),
+                'address' => '123 Main Street, Colombo',
+                'phone'   => '011-1234567',
+                'email'   => 'hello@myshop.lk',
+            ],
+        ];
+
+        $pdf = Pdf::loadView('sales.invoice', $data)->setPaper('A4');
+        return $pdf->download("invoice-{$sale->id}.pdf");
     }
 }
