@@ -90,4 +90,34 @@ class SaleController extends Controller
         $pdf = Pdf::loadView('sales.invoice', $data)->setPaper('A4');
         return $pdf->download("invoice-{$sale->id}.pdf");
     }
+
+    public function generateCombinedInvoice(Request $request)
+    {
+        // Fetch sales (you can modify the query based on your needs, e.g., date range)
+        $sales = Sale::with('product')->get(); // Example: Get all sales
+
+        // Prepare data for the invoice
+        $data = [
+            'sales' => $sales,
+            'grand_total' => $sales->sum('total_price'),
+            'biz' => [
+                'name'    => config('app.name', 'My Shop'),
+                'address' => '123 Main Street, Colombo',
+                'phone'   => '011-1234567',
+                'email'   => 'hello@myshop.lk',
+            ],
+            'invoice_date' => now()->format('Y-m-d'), // Add invoice date
+            'invoice_number' => 'INV-' . now()->format('YmdHis'), // Unique invoice number
+        ];
+
+        // Load the view and generate the PDF
+        $pdf = Pdf::loadView('sales.combined_invoice', $data)->setPaper('A4');
+        
+        // Return the PDF as a stream or download
+        if ($request->has('download')) {
+            return $pdf->download("combined-invoice-{$data['invoice_number']}.pdf");
+        }
+        
+        return $pdf->stream("combined-invoice-{$data['invoice_number']}.pdf");
+    }
 }

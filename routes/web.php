@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SaleController;
@@ -30,3 +31,5 @@ Route::get('/sales/{sale}/invoice.pdf', [SaleController::class, 'invoicePdf'])
 
 Route::get('/sales/{sale}/invoice/download', [SaleController::class, 'invoiceDownload'])
     ->name('sales.invoice.download');     // force download
+
+Route::get('/sales/combined-invoice', [SaleController::class, 'generateCombinedInvoice'])->name('sales.combined_invoice');
